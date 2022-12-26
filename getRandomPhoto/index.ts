@@ -90,6 +90,10 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
       blobsUploaded.push(uploaded)
     })
 
+    await unsplashApi.photos.trackDownload({
+      downloadLocation: location
+    })
+
     await Promise.all(processImages)
     context.res = {
       body: {
