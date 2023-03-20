@@ -8,6 +8,26 @@ import { Image } from "../src/types/Images"
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
 
+  // Convert stream to text
+  const streamToText = async (readable) => {
+    readable.setEncoding('utf8');
+    let data = '';
+    for await (const chunk of readable) {
+      data += chunk;
+    }
+    return data;
+  }
+
+  const checkNonBlacklistedPhoto = (apiResponse, blacklist) => {
+    for (const image of apiResponse.response) {
+      if (blacklist.alt_description.indexOf(image.alt_description) !== -1) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   // Validate body
   try {
     validate(req.body)
@@ -39,18 +59,34 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     // Create the BlobServiceClient object with connection string
     const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_STORAGE_CONNECTION_STRING)
 
+    // Read the image blacklist
+    const blacklistBlobName = `blacklist.json`
+    const blacklistContainerClient = blobServiceClient.getContainerClient(process.env.AZURE_STORAGE_ACCOUNT_BLACKLIST_CONTAINER_NAME);
+    const blacklistBlockBlobClient = blacklistContainerClient.getBlockBlobClient(blacklistBlobName);
+    const downloadBlockBlobResponse = await blacklistBlockBlobClient.download(0);
+    const downloaded = await streamToText(downloadBlockBlobResponse.readableStreamBody);
+    const blacklist = JSON.parse(downloaded);
+
     // Process images
     const results = []
     const processImages = req.body.images.map(async (image: Image) => {
       const subject = image.subject
       const formats = image.formats
 
-      // get 1 photo
-      const response = await unsplashApi.photos.getRandom({
-        query: subject,
-        orientation: "landscape",
-        count: 1
-      })
+      let response;
+      let gotPhoto = false;
+
+      // Call the API until we get one non blacklisted photo
+      while (!gotPhoto) {
+        // get 1 photo
+        response = await unsplashApi.photos.getRandom({
+          query: subject,
+          orientation: "landscape",
+          count: 1
+        })
+
+        gotPhoto = checkNonBlacklistedPhoto(response, blacklist);
+      }
 
       // extract URL
       let url: string
