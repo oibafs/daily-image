@@ -15,7 +15,8 @@ const timerTrigger: AzureFunction = async function (context: Context, myTimer: a
         formats: [
           "q4k",
           "mac",
-          "iphone13Pro"
+          "iphone13Pro",
+          "iPad"
         ]
       },
       {
@@ -23,13 +24,15 @@ const timerTrigger: AzureFunction = async function (context: Context, myTimer: a
         formats: [
           "q4k",
           "mac",
-          "iphone13Pro"
+          "iphone13Pro",
+          "iPad"
         ]
       },
       {
         subject: "car",
         formats: [
-          "iphone13Pro"
+          "iphone13Pro",
+          "iPad"
         ]
       },
       {
@@ -37,7 +40,8 @@ const timerTrigger: AzureFunction = async function (context: Context, myTimer: a
         formats: [
           "q4k",
           "mac",
-          "iphone13Pro"
+          "iphone13Pro",
+          "iPad"
         ]
       },
       {
@@ -47,7 +51,8 @@ const timerTrigger: AzureFunction = async function (context: Context, myTimer: a
           "mac",
           "iphone13Pro",
           "galaxyJ7Pro",
-          "galaxyS9P"
+          "galaxyS9P",
+          "iPad"
         ]
       },
       {
@@ -55,7 +60,8 @@ const timerTrigger: AzureFunction = async function (context: Context, myTimer: a
         formats: [
           "q4k",
           "mac",
-          "iphone13Pro"
+          "iphone13Pro",
+          "iPad"
         ]
       },
       {
@@ -63,7 +69,8 @@ const timerTrigger: AzureFunction = async function (context: Context, myTimer: a
         formats: [
           "q4k",
           "mac",
-          "iphone13Pro"
+          "iphone13Pro",
+          "iPad"
         ]
       },
       {
@@ -72,7 +79,8 @@ const timerTrigger: AzureFunction = async function (context: Context, myTimer: a
           "q4k",
           "mac",
           "iphone13Pro",
-          "galaxyA51"
+          "galaxyA51",
+          "iPad"
         ]
       }
     ]

@@ -102,7 +102,8 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         iphone13Pro: url + '&fit=crop&h=2532&w=1170',
         galaxyA51: url + '&fit=crop&h=2400&w=1080',
         galaxyJ7Pro: url + '&fit=crop&h=1920&w=1080',
-        galaxyS9P: url + '&fit=crop&h=2960&w=1440'
+        galaxyS9P: url + '&fit=crop&h=2960&w=1440',
+        iPad: url + '&fit=crop&h=2360&w=1640'
       }
 
       const imagesDownloaded = []
