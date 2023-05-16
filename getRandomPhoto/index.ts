@@ -8,6 +8,23 @@ import { Image } from "../src/types/Images"
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
 
+  interface ImageDownloaded {
+    imageUrl: string;
+  }
+
+  interface ImageUploaded {
+    blobName: string;
+    blobUrl: string;
+  }
+
+  interface Result {
+    subject: string;
+    url: string;
+    download: ImageDownloaded[],
+    upload: ImageUploaded[]
+  }
+
+
   // Convert stream to text
   const streamToText = async (readable) => {
     readable.setEncoding('utf8');
@@ -26,6 +43,16 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     }
 
     return true;
+  }
+
+  const saveResults = async (blobServiceClient: BlobServiceClient, results: Result[]) => {
+    const blobName = 'imagesDownloaded.json';
+    const containerClient = blobServiceClient.getContainerClient(process.env.AZURE_STORAGE_ACCOUNT_CONTAINER_NAME);
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+    const arrayData = JSON.stringify(results);
+    const dataArray = new TextEncoder().encode(arrayData);
+    await blockBlobClient.uploadData(dataArray); 
   }
 
   // Validate body
@@ -106,8 +133,8 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         iPad: url + '&fit=crop&h=2360&w=1640'
       }
 
-      const imagesDownloaded = []
-      const blobsUploaded = []
+      const imagesDownloaded: ImageDownloaded[] = []
+      const blobsUploaded: ImageUploaded[] = []
 
       const processFormats = formats.map(async (format: string) => {
         // download photo
@@ -151,6 +178,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     })
 
     await Promise.all(processImages)
+    await saveResults(blobServiceClient, results)
     context.res = {
       body: {
         results
