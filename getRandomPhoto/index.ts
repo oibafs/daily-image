@@ -135,9 +135,11 @@ const httpTrigger: AzureFunction = async function (
       // extract URL
       let url: string
       let location: string
+      let alt_description: string
       ;(response.response as unknown as any[]).map((response) => {
         url = response.urls.full
         location = response.links.download_location
+        alt_description = response.alt_description
       })
 
       const download = {
@@ -190,6 +192,7 @@ const httpTrigger: AzureFunction = async function (
       const result = {
         subject,
         url,
+        alt_description,
         download: imagesDownloaded,
         upload: blobsUploaded,
       }
