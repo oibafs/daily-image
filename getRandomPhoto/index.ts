@@ -85,16 +85,9 @@ const httpTrigger: AzureFunction = async function (
     })
 
     // Azure Blob Storage client
-    const AZURE_STORAGE_CONNECTION_STRING =
-      process.env.AZURE_STORAGE_CONNECTION_STRING
-    if (!AZURE_STORAGE_CONNECTION_STRING) {
-      throw Error('Azure Storage Connection string not found')
-    }
-    // Create the BlobServiceClient object with connection string
-    // const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_STORAGE_CONNECTION_STRING)
     const credential = new ManagedIdentityCredential()
     const blobServiceClient = new BlobServiceClient(
-      'https://dailyimage.blob.core.windows.net',
+      `https://${process.env.AZURE_STORAGE_ACCOUNT_NAME}.blob.core.windows.net`,
       credential,
     )
 
