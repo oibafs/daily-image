@@ -107,8 +107,21 @@ const httpTrigger: AzureFunction = async function (
     // Process images
     const results = []
     const processImages = req.body.images.map(async (image: Image) => {
+      let query: string
       const subject = image.subject
       const formats = image.formats
+
+      query = subject
+      if (subject == 'heineken') {
+        const gpQueries = [
+          'Grupo Petrópolis',
+          'Crystal',
+          'Itaipava',
+          'Petra',
+          'TNT',
+        ]
+        query = gpQueries[Math.floor(Math.random() * 5)]
+      }
 
       let response
       let gotPhoto = false
@@ -117,7 +130,7 @@ const httpTrigger: AzureFunction = async function (
       while (!gotPhoto) {
         // get 1 photo
         response = await unsplashApi.photos.getRandom({
-          query: subject,
+          query,
           orientation: 'landscape',
           count: 1,
         })
